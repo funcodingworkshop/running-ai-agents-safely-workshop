@@ -1,1 +1,8 @@
-# running-ai-agents-safely-workshop
+# Running AI Agents Safely Workshop
+
+## Starting the app
+
+```
+cd tic-tac-toe
+npm run dev
+```
