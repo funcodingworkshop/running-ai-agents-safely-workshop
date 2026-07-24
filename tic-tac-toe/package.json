@@ -16,7 +16,9 @@
     "test:e2e": "npm run test:e2e -w client",
     "test:e2e:headed": "npm run test:e2e:headed -w client",
     "docker:build": "docker build -t tic-tac-toe-e2e .",
-    "docker:test": "docker run --rm tic-tac-toe-e2e"
+    "docker:test": "docker run --rm tic-tac-toe-e2e",
+    "clean": "rm -rf node_modules client/node_modules server/node_modules",
+    "reinstall": "npm run clean && npm ci"
   },
   "keywords": [],
   "author": "",
