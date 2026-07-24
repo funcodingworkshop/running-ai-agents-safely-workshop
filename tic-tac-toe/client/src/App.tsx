@@ -14,6 +14,7 @@ function App() {
     <div style={{ textAlign: 'center', marginTop: '50px' }}>
       <h1>Client-Server Boilerplate</h1>
       <p>Backend response: <strong>{message}</strong></p>
+      <div id="test_1">Hi Mike</div>
     </div>
   );
 }
