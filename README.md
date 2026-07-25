@@ -91,3 +91,36 @@ PROJECT_DIR=$PWD/tic-tac-toe scripts/agent-run.sh   # mount only tic-tac-toe
 CLAUDE_CREDS_DIR=~/.claude-mike                      # host Claude config (read-only)
 ALLOW_TELEMETRY=1                                    # also allowlist telemetry
 ```
+
+### Running on Windows (WSL2)
+
+The sandbox itself is a Linux container, so every security control — the read-only
+root filesystem, tmpfs scratch, non-root user, and the `iptables`/`ipset` egress
+firewall (`--cap-add=NET_ADMIN`) — runs unchanged on Windows. Nothing in the
+Dockerfile, `entrypoint.sh`, or `init-firewall.sh` needs editing. The only friction is
+that the helper scripts are bash and assume Unix host paths, which WSL2 resolves.
+
+1. **Install Docker Desktop with the WSL2 backend** (Settings → General → *Use the
+   WSL 2 based engine*). This gives the container a real Linux kernel, which the
+   firewall requires. The legacy Hyper-V backend is not supported.
+
+2. **Run everything from inside a WSL2 shell** (e.g. Ubuntu), not `cmd.exe` or
+   PowerShell. Keep the repo and your Claude config dir **inside the WSL2 filesystem**
+   (e.g. `~/projects/...` in Ubuntu, not `/mnt/c/...`). Native Linux paths make the
+   bind mounts in `agent-run.sh` work as-is and are much faster than crossing the
+   Windows↔WSL2 boundary.
+
+3. **Authenticate with a token.** There is no macOS Keychain fallback on Windows, so
+   the token step is required, not optional:
+
+   ```
+   claude setup-token                        # run once; prints a token
+   export CLAUDE_CODE_OAUTH_TOKEN=<token>     # or export ANTHROPIC_API_KEY=<key>
+   ```
+
+Then build and run exactly as above (`scripts/agent-build.sh`, `scripts/agent-run.sh`)
+from the WSL2 shell.
+
+> Running the scripts from **Git Bash** instead of WSL2 also works, but Git Bash
+> rewrites container paths like `/workspace` into Windows paths. Prefix commands with
+> `MSYS_NO_PATHCONV=1` if you go that route. WSL2 avoids this entirely.
